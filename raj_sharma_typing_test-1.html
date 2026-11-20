@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raj Sharma Typing Test</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#101827,#243b55);color:#f7f9fc;min-height:100vh;display:grid;place-items:center;padding:18px}
+.card{width:min(850px,100%);background:#172337;border:1px solid #34445d;border-radius:20px;padding:25px;box-shadow:0 18px 50px #0005}
+h1{margin:0 0 7px;text-align:center} .sub{text-align:center;color:#aebbd0;margin:0 0 24px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}.stat{background:#22334c;border-radius:13px;padding:14px;text-align:center}.stat b{display:block;font-size:27px;color:#72e0c0}.stat span{font-size:12px;color:#bdc9d9}
+#quote{background:#0e1929;padding:20px;border-radius:13px;line-height:1.9;font-size:19px;min-height:130px;color:#c7d3e4;margin-bottom:14px}
+#quote span.correct{color:#72e0c0}#quote span.wrong{color:#ff8585;background:#542b39;border-radius:3px}
+textarea{width:100%;height:125px;resize:vertical;border:1px solid #52647e;border-radius:12px;background:#f7f9fc;color:#152238;padding:15px;font-size:17px;outline:none}
+textarea:focus{border-color:#72e0c0} .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:15px}
+button{border:0;border-radius:10px;padding:12px 19px;font-weight:bold;cursor:pointer;background:#72e0c0;color:#102033}button.secondary{background:#344761;color:white}
+#result{margin-top:16px;color:#72e0c0;font-weight:bold;min-height:24px}.hint{color:#aebbd0;font-size:13px;margin-top:12px}
+@media(max-width:520px){.card{padding:17px}.stats{gap:7px}.stat{padding:10px 4px}.stat b{font-size:22px}#quote{font-size:17px}}
+</style>
+</head>
+<body>
+<main class="card">
+<h1>Raj Sharma Typing Test</h1>
+<p class="sub">Practice daily • Improve your speed and accuracy</p>
+<section class="stats">
+<div class="stat"><b id="time">60</b><span>SECONDS</span></div>
+<div class="stat"><b id="wpm">0</b><span>WPM</span></div>
+<div class="stat"><b id="accuracy">100%</b><span>ACCURACY</span></div>
+</section>
+<div id="quote" aria-label="Text to type"></div>
+<textarea id="typing" placeholder="Start typing the text above here..." spellcheck="false"></textarea>
+<div class="actions">
+<button id="restart">Restart test</button>
+<button class="secondary" id="newText">New paragraph</button>
+</div>
+<div id="result" aria-live="polite"></div>
+<p class="hint">The 60-second timer starts when you type your first character. WPM is an estimate based on correct words.</p>
+</main>
+<script>
+const passages=[
+"Practice makes progress. A little effort every day can help you become faster and more accurate at typing. Stay focused and keep learning.",
+"Technology makes many tasks easier. Learning to type confidently is a useful skill for school, work, and everyday communication.",
+"Success comes from patience and regular practice. Set a small goal, give your best effort, and celebrate every improvement."
+];
+let passage="",started=false,remaining=60,timer=null;
+const quote=document.getElementById("quote"),input=document.getElementById("typing");
+function chooseText(){passage=passages[Math.floor(Math.random()*passages.length)];quote.innerHTML="";[...passage].forEach(ch=>{const s=document.createElement("span");s.textContent=ch;quote.appendChild(s)});}
+function reset(){clearInterval(timer);timer=null;started=false;remaining=60;input.value="";input.disabled=false;document.getElementById("time").textContent=60;document.getElementById("wpm").textContent=0;document.getElementById("accuracy").textContent="100%";document.getElementById("result").textContent="";chooseText();input.focus();}
+function update(){const typed=input.value;let correct=0;[...quote.children].forEach((s,i)=>{const c=typed[i];s.className=c==null?"":c===s.textContent?"correct":"wrong";if(c===s.textContent)correct++;});const accuracy=typed.length?Math.round(correct/typed.length*100):100;document.getElementById("accuracy").textContent=accuracy+"%";const elapsed=60-remaining;document.getElementById("wpm").textContent=elapsed?Math.round((correct/5)/(elapsed/60)):0;if(typed.length>=passage.length){finish();}}
+function finish(){clearInterval(timer);timer=null;input.disabled=true;document.getElementById("result").textContent="Test complete! Your final speed: "+document.getElementById("wpm").textContent+" WPM";}
+input.addEventListener("input",()=>{if(!started){started=true;timer=setInterval(()=>{remaining--;document.getElementById("time").textContent=remaining;if(remaining<=0)finish();},1000);}update();});
+document.getElementById("restart").addEventListener("click",reset);
+document.getElementById("newText").addEventListener("click",reset);
+reset();
+</script>
+</body>
+</html>
